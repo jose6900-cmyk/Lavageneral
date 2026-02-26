@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Saldo Lavandería</title>
+
+    <link rel="icon" href="icono.png" type="image/png">
+    <link rel="apple-touch-icon" href="icono.png">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2196F3, #64B5F6);
+            color: #fff;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.12);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            margin: 8px 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            background-color: #43a047;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Saldo Lavandería</h1>
+
+<div class="grid">
+
+    <div class="card">
+        <img src="lavadora1.jpg" alt="Lavadora 1">
+        <h3>Lavadora 1</h3>
+        <button class="btn" onclick="pedirPin(this, 'URL_IFTTT_LAVADORA_1')">+4 €</button>
+    </div>
+
+    <div class="card">
+        <img src="lavadora2.jpg" alt="Lavadora 2">
+        <h3>Lavadora 2</h3>
+        <button class="btn" onclick="pedirPin(this, 'URL_IFTTT_LAVADORA_2')">+4 €</button>
+    </div>
+
+    <div class="card">
+        <img src="lavadora3.jpg" alt="Lavadora 3">
+        <h3>Lavadora 3</h3>
+        <button class="btn" onclick="pedirPin(this, 'URL_IFTTT_LAVADORA_3')">+6 €</button>
+    </div>
+
+    <div class="card">
+        <img src="secadora1.jpg" alt="Secadora 1">
+        <h3>Secadora 1</h3>
+        <button class="btn" onclick="pedirPin(this, 'URL_IFTTT_SECADORA_1')">+2 €</button>
+    </div>
+
+    <div class="card">
+        <img src="secadora2.jpg" alt="Secadora 2">
+        <h3>Secadora 2</h3>
+        <button class="btn" onclick="pedirPin(this, 'URL_IFTTT_SECADORA_2')">+2 €</button>
+    </div>
+
+</div>
+
+<div id="status" class="status"></div>
+
+<script>
+    const PIN_CORRECTO = "2272";
+
+    function pedirPin(boton, url) {
+        const pin = prompt("Introduce el PIN");
+
+        if (pin !== PIN_CORRECTO) {
+            mostrarEstado("❌ PIN incorrecto");
+            return;
+        }
+
+        enviarOrden(boton, url);
+    }
+
+    function enviarOrden(boton, url) {
+        boton.disabled = true;
+        mostrarEstado("⏳ Enviando saldo...");
+
+        fetch(url, { mode: 'no-cors' })
+            .then(() => {
+                mostrarEstado("✅ Saldo añadido correctamente");
+            })
+            .catch(() => {
+                mostrarEstado("❌ Error al enviar la orden");
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    boton.disabled = false;
+                    mostrarEstado("");
+                }, 3000);
+            });
+    }
+
+    function mostrarEstado(texto) {
+        document.getElementById("status").textContent = texto;
+    }
+</script>
+
+</body>
+</html>
